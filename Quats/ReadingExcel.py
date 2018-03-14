@@ -39,7 +39,7 @@ def addHashTable(pair, hashtable):
         stop = False
         string = pair[0]
         if (string == string):
-            string = string.lower();
+            #string = string.lower();
             slot = hashValue(string, len (hashtable))
             while not stop:
                 if hashtable[slot] == None:
