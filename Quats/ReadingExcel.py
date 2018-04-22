@@ -5,22 +5,25 @@ import xlwt
 
 def hashValue(string, size):
     hash = 0
+    string = string.lower();
+    string.replace(u'\xa0', ' ')
     for x in string:
         hash = hash + ord(x)
     return(hash % size)
 
-def highlight_cells():
-    # provide your criteria for highlighting the cells here
-    return ['background-color: red']
 
 def searchHashTable(string, hashtable):
+    x = 0;
+    temp = string
     collisions = 0
     found = False
     if (string == string):
         string = string.lower();
+        string.replace(u'\xa0', ' ')
         slot = hashValue(string, len (hashtable))
-        #string = string.lower();
         while not found:
+            x = x + 1;
+
             possible = hashtable[slot]
             if possible is None:
                 return 'Not Found'
@@ -29,8 +32,9 @@ def searchHashTable(string, hashtable):
                     found = True
                     return possible[1]
                 else:
-                    slot = (slot + (collisions**2))%len(hashtable)
                     collisions = collisions + 1
+                    slot = (slot + (collisions**2))%len(hashtable)
+
     else:
         return 'Not Found'
 
@@ -39,7 +43,6 @@ def addHashTable(pair, hashtable):
         stop = False
         string = pair[0]
         if (string == string):
-            #string = string.lower();
             slot = hashValue(string, len (hashtable))
             while not stop:
                 if hashtable[slot] == None:
@@ -56,7 +59,7 @@ def searchHashTableProducts(pair, hashtable):
     found = False
     if (pair[0] == pair[0]):
         string = pair[0]
-        slot = hashValue(pair[0], len (hashtableProducts))
+        slot = hashValue(string, len (hashtableProducts))
         while not found:
             possible = hashtable[slot]
             if possible is None:
@@ -65,7 +68,7 @@ def searchHashTableProducts(pair, hashtable):
                 found = True
                 return possible[1]
             else:
-                slot = (slot + (collisions**2))%len(hashtable)
+                slot = (slot + (collisions**2))%len(hashtableProducts)
                 collisions = collisions + 1
     else:
         return 'Not Found'
@@ -103,21 +106,21 @@ for i, row in df.iterrows():
                 pass
             if (alias == alias and isinstance(alias, basestring)):
                 alias = alias.lower();
+                alias.replace(u'\xa0', ' ')
                 pair = (alias, value)
                 duplicate = searchHashTable(alias, hashtable)
-                if duplicate in ['Not Found']:
+                if duplicate == 'Not Found':
                     numAliasNames = numAliasNames + 1
                     addHashTable(pair, hashtable)
                     sheet2.write(j, 1, alias)
                 else:
-                    if duplicate is not numCanonicalNames:
+                    if duplicate != numCanonicalNames:
                         sheet4.write(h, 1, alias)
                         h = h + 1
                 j = j + 1
             else:
                 space = True
-        value1 = value.lower();
-        pairSame = (value1, value)
+        pairSame = (value, value)
         addHashTable(pairSame, hashtable)
         sheet3.write(numCanonicalNames, 1, numAliasNames)
         numCanonicalNames = numCanonicalNames + 1;
@@ -136,12 +139,10 @@ for j, row in af.iterrows():
     if productName is np.nan:
         productName = ' '
     chemicalName = row[1]
-    if isinstance(chemicalName, basestring):
-        chemicalName = chemicalName.replace(u'\xa0', ' ')
     canonicalName = searchHashTable(chemicalName, hashtable)
     productChemicalPair = (productName, canonicalName)
     found = searchHashTableProducts(productChemicalPair, hashtableProducts)
-    if found in ['Not Found']:
+    if found == 'Not Found':
         sheet1.write(j, 0, productName)
         addHashTable(productChemicalPair, hashtableProducts)
         if not productName.isspace():
